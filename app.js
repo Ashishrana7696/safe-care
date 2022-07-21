@@ -4,6 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const mongoose = require("mongoose");
+
+//for use env varables
+require('dotenv').config();
+const env                     = process.env;
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -37,5 +43,15 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+const url = env.DB_CLOUD;
+mongoose.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }).then(() => console.log(`Successfully Connected to ${url}`));
+
+app.listen(env.PORT, () => {
+  console.log(`Example app listening at http://localhost:${env.PORT}`)
+})
 
 module.exports = app;
