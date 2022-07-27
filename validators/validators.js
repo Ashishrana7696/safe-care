@@ -26,10 +26,22 @@ const userValidationRules = (formRequest) => {
                 body("request.action", "action must not be empty").not().isEmpty().isIn(['buy', 'sell']).withMessage('Action Value Is Not Valid'),
                 body("request.stock_symbol", "stock symbol must not be empty").not().isEmpty(),
                 body("request.order_type", "Order type must not be empty").not().isEmpty(),
-                body("request.price", "Price must not be empty").not().isEmpty().isInt({ min:1}).withMessage('Price must be greater then zero.'),
+                body("request.price", "Price must not be empty").not().isEmpty().isInt({ min: 1 }).withMessage('Price must be greater then zero.'),
                 body("request.expiry_type", "Expiry Type must not be empty").not().isEmpty(),
                 body("request.market_classification", "Market Classification must not be empty").not().isEmpty(),
                 body("request.amount").optional(),
+            ];
+            break
+        case "employees":
+            return [
+                body("last_name", "last name must not be empty").not().isEmpty(),
+                body("first_name", "first name must not be empty").not().isEmpty(),
+                body("pan_number", "pan number must not be empty").not().isEmpty(),
+                body("aadhar_number", "aadhar number must not be empty").not().isEmpty(),
+                body("address", "address must not be empty").not().isEmpty(),
+                body("doj", "doj must not be empty").not().isEmpty(),
+                body("department", "department must not be empty").not().isEmpty(),
+                body("phone_number", "phone number must not be empty").not().isEmpty()
             ];
             break
         default:
