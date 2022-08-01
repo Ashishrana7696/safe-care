@@ -10,5 +10,6 @@ const employeesDetails = require('../controllers/employeesDetails');
 router.post('/signup', userValidationRules('signup'), UserController.milSignUp);
 router.post('/login', userValidationRules('login'), validate, UserController.milSignIn);
 router.post('/add-employees', userValidationRules('employees'), validate, employeesDetails.addEmployees);
-
+router.post('/employees-list', validate, employeesDetails.getEmployeeList);
+router.post('/update-employees-details', validate, employeesDetails.updateEmployeeDetails);
 module.exports = router;
