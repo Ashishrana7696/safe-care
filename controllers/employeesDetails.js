@@ -1,6 +1,6 @@
 
 const employees = require('../Model/employees');
-
+const helper = require('../helper')
 async function addEmployees(req, res) {
     try {
 
@@ -42,14 +42,20 @@ async function getEmployeeList(req, res) {
 
 
 async function updateEmployeeDetails(req, res) {
-console.log(req.body._id);
-console.log(req.body);
     let result = await employees.updateOne({ _id: req.body._id}, {$set: req.body.updated_records});
 
     res.success(result);
 }
 
+async function getExcelFile(req,res) {
+    let employeeDetails = await employees.find({}).select({ "first_name": 1, "_id": 0});;
+
+    req.employeeDetails = employeeDetails;
+    helper.arrayToExcel(req,res); 
+}
+
 module.exports = {
+    getExcelFile:getExcelFile,
     addEmployees: addEmployees,
     getEmployeeList: getEmployeeList,
     updateEmployeeDetails:updateEmployeeDetails

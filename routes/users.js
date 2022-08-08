@@ -12,4 +12,5 @@ router.post('/login', userValidationRules('login'), validate, UserController.mil
 router.post('/add-employees', userValidationRules('employees'), validate, employeesDetails.addEmployees);
 router.post('/employees-list', validate, employeesDetails.getEmployeeList);
 router.post('/update-employees-details', validate, employeesDetails.updateEmployeeDetails);
+router.post('/get-employee-excel-file', validate, employeesDetails.getExcelFile);
 module.exports = router;
