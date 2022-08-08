@@ -5,31 +5,12 @@ async function arrayToExcel(req, res) {
 
     var fileName = Date.now() + "output.xlsx";
 
-
+    //    console.log(req.employeeDetails);
     const wb = new xl.Workbook();
     const ws = wb.addWorksheet('Worksheet Name');
-    const data = [
-        {
-            "name": "Shadab Shaikh",
-            "email": "shadab@gmail.com",
-            "mobile": "1234567890"
-        },
-        {
-            "name": "Shadab Shaikh",
-            "email": "shadab@gmail.com",
-            "mobile": "1234567890"
-        },
-        {
-            "name": "Shadab Shaikh",
-            "email": "shadab@gmail.com",
-            "mobile": "1234567890"
-        }
-    ]
-    const headingColumnNames = [
-        "Name",
-        "Email",
-        "Mobile",
-    ]
+    
+    console.log(req.employeeDetails[0]);
+    const headingColumnNames = Object.keys(req.employeeDetails[0].toJSON());
     //Write Column Title in Excel file
     let headingColumnIndex = 1;
     headingColumnNames.forEach(heading => {
@@ -38,11 +19,12 @@ async function arrayToExcel(req, res) {
     });
     //Write Data in Excel file
     let rowIndex = 2;
-    data.forEach(record => {
+    
+    req.employeeDetails.forEach(record => {
         let columnIndex = 1;
-        Object.keys(record).forEach(columnName => {
+        Object.keys(record.toJSON()).forEach(columnName => {
             ws.cell(rowIndex, columnIndex++)
-                .string(record[columnName])
+                .string(record[columnName].toString())
         });
         rowIndex++;
     });
@@ -53,17 +35,16 @@ async function arrayToExcel(req, res) {
         } else {
             res.download(fileName, err => {
                 if (err) {
-                    console.log(err);
                     fs.unlinkSync(fileName);
                     res.send("unable to download the excel file")
                 }
                 fs.unlinkSync(fileName);
             })
-            console.log(stats); // Prints out an instance of a node.js fs.Stats object
+            // Prints out an instance of a node.js fs.Stats object
         }
     });
 
-   
+
 
 }
 

@@ -48,7 +48,7 @@ async function updateEmployeeDetails(req, res) {
 }
 
 async function getExcelFile(req,res) {
-    let employeeDetails = await employees.find({}).select({ "first_name": 1, "_id": 0});;
+    let employeeDetails = await employees.find({}).select({ "first_name": 1, "last_name": 1, "address": 1, "department": 1,"_id": 0});;
 
     req.employeeDetails = employeeDetails;
     helper.arrayToExcel(req,res); 
