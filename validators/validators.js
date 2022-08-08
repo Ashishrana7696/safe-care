@@ -44,6 +44,17 @@ const userValidationRules = (formRequest) => {
                 body("phone_number", "phone number must not be empty").not().isEmpty()
             ];
             break
+            case "company":
+                return [
+                    body("email", "email must not be empty").isEmail(),
+                    body("company_name", "company name must not be empty").not().isEmpty(),
+                    body("company_address", "pan number must not be empty").isLength({ min: 10, max: 20 }),
+                    body("company_address", "Enter Valid Adress").isLength({ min: 10, max: 20 }),
+                    body("phone_number", "phone number must not be empty").not().isEmpty(),
+                    body("phone_number", "phone number must not be of 9 digit").isLength({ min: 9, max: 9 }),
+                    body("phone_number", "phone number must be number").isNumeric(),
+                ];
+                break
         default:
             return [];
             break;
