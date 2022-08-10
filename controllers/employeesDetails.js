@@ -1,5 +1,6 @@
 
 const employees = require('../Model/employees');
+const salary = require('../Model/salary');
 const helper = require('../helper')
 async function addEmployees(req, res) {
     try {
@@ -54,9 +55,30 @@ async function getExcelFile(req,res) {
     helper.arrayToExcel(req,res); 
 }
 
+async function addSalary(req,res){
+ try{
+    var salaryDetails={
+        "employee_id":req.body.employee_id,
+        "first_name": req.body.first_name,
+        "last_name": req.body.last_name,
+        "pan_number": req.body.pan_number,
+        "department": req.body.department,
+        "doj": req.body.doj,
+        "email": req.body.email,
+        "salary": req.body.salary,
+        }
+    let data=await salary.create(salaryDetails);
+    res.success({"res":data});
+    }
+     catch(error){
+    res.success([],404,error.message);
+    }
+}
+
 module.exports = {
     getExcelFile:getExcelFile,
     addEmployees: addEmployees,
     getEmployeeList: getEmployeeList,
-    updateEmployeeDetails:updateEmployeeDetails
+    updateEmployeeDetails:updateEmployeeDetails,
+    addSalary:addSalary
 }
