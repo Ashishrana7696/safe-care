@@ -47,7 +47,7 @@ const employeesSchema = mongoose.Schema(
             required: true,
             validate: {
                 validator: function (val) {
-                    return val.toString().length === 9
+                    return val.toString().length === 10
                 },
                 message: val => `${val.value} has to be 9 digits`
             }

@@ -17,4 +17,7 @@ router.post('/get-employee-excel-file', validate, employeesDetails.getExcelFile)
 router.post('/add-company', userValidationRules('company'), validate, companyDetail.addCompany);
 router.post('/get-company-detail', validate, companyDetail.getCompanyDetail);
 router.post('/add-salary', validate, employeesDetails.addSalary);
+
+router.post('/add-company-visits-details', validate, companyDetail.companyVisitsDetails);
+router.post('/get-employee-company-visits-details', validate, companyDetail.getEmployeeVisitsList);
 module.exports = router;
