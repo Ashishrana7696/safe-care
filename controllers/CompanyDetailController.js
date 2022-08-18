@@ -92,55 +92,103 @@ async function companyVisitsDetails(req, res) {
 
 async function getEmployeeVisitsList(req, res) {
 
-  let filters = {};
+  try {
 
-  if (typeof req.body.filters === 'object' && req.body.filters !== null) {
-    if (req.body.filters.company_id !== null) {
-      filters['company_id'] = mongoose.Types.ObjectId(req.body.filters.company_id);
+    var items = req.body.no_of_record;
+    var page_no = req.body.page_number;
+    var offset = page_no * items - items;
+
+    let filters = {};
+    let filtersForEmpVisits = {};
+    if (typeof req.body.filters === 'object' && req.body.filters !== null) {
+      if (req.body.filters.company_id !== null) {
+        filters['company_id'] = mongoose.Types.ObjectId(req.body.filters.company_id);
+      }
+
+      if (typeof req.body.filters.day !== 'undefined') {
+        filtersForEmpVisits['employee_visits.day'] = req.body.filters.day;
+      }
     }
-  }
 
-
-  let arg = {
-    query: [
-      {
-        $match: { ...filters }
-      },
-      {
-        $lookup: {
-          from: "companyvisitemployeesbydays",
-          localField: "company_id",
-          foreignField: "company_id",
-          as: "employee_visits"
+   
+    let arg = {
+      query: [
+        {
+          $match: { ...filters}
+        },
+        {
+          $lookup: {
+            from: "companyvisitemployeesbydays",
+            localField: "company_id",
+            foreignField: "company_id",
+            as: "employee_visits"
+          }
+        },
+        {
+          $unwind: '$employee_visits'
+        },
+        {
+          $match: { ...filtersForEmpVisits}
+        },
+        {
+          $lookup: {
+            from: "company_details",
+            localField: "company_id",
+            foreignField: "_id",
+            as: "company_details"
+          }
+        },
+        {
+          $unwind: '$company_details'
+        },
+        {
+          $lookup: {
+            from: "employees",
+            localField: "employee_visits.employee_id",
+            foreignField: "_id",
+            as: "employee_details"
+          }
+        },
+        {
+          $unwind: '$employee_details'
+        },
+        {
+          $addFields:
+          {
+            from_date: '$employee_visits.from_date',
+            to_date: '$employee_visits.to_date',
+            company_email: '$company_details.email',
+            company_name: '$company_details.company_name',
+            company_address: '$company_details.company_address',
+            employee_name: { $concat: ['$employee_details.first_name', '$employee_details.last_name'] },
+            day: '$employee_visits.day',
+          }
+        },
+       
+        { $limit: req.body.no_of_record },
+        { $skip: offset },
+        {
+          $project: {
+            from_date: 1,
+            to_date: 1,
+            company_email: 1,
+            company_name: 1,
+            company_address: 1,
+            employee_name: 1,
+            last_name: 1,
+            day: 1
+          }
         }
-      },
-      // { $unwind: "$employee_visits" },
-      {
-        $lookup: {
-          from: "company_details",
-          localField: "_id",
-          foreignField: "company_id",
-          as: "company_details"
-        }
-      },
-      // { $unwind: "$company_details" },
-      
-    ]
+
+      ]
+    }
+
+
+    let employeeVisitsDetails = await companyVistsMonthRange.companyMonthRange.aggregate(arg.query)
+    res.success(employeeVisitsDetails);
+  } catch (error) {
+    res.success([], 400, error.message);
   }
-
-
-  let employeeVisitsDetails = await companyVistsMonthRange.companyMonthRange.aggregate(arg.query)
-console.log(arg);
-  // [{
-  //   $lookup: {
-  //     from: "companyvisitemployeesbydays",
-  //     localField: "service_type",
-  //     foreignField: "service_type",
-  //     as: "employee_visits"
-  //   }
-  // }]
-
-  res.success(employeeVisitsDetails);
 }
 
 
