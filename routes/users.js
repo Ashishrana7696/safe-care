@@ -20,4 +20,10 @@ router.post('/add-salary', validate, employeesDetails.addSalary);
 
 router.post('/add-company-visits-details', validate, companyDetail.companyVisitsDetails);
 router.post('/get-employee-company-visits-details', validate, companyDetail.getEmployeeVisitsList);
+
+/**
+ * APIS For attendance
+ */
+ router.post('/employee-attendance-opertaion', validate, employeesDetails.attendanceOpertaion);
+ router.post('/get-absent-employee-details', validate, employeesDetails.getTodayAbsentEmployee);
 module.exports = router;
