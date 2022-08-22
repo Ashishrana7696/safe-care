@@ -135,12 +135,13 @@ async function getTodayAbsentEmployee(req, res) {
         let filters = {};
 
         if (typeof req.body.filters === 'object') {
-            if (typeof req.body.filters.absent_date !== 'undefined') {
-                filters['absent_date'] = req.body.filters.absent_date;
+            
+            if (typeof req.body.filters.absent_date == 'string') {
+                filters['attendances_details.absent_date'] = req.body.filters.absent_date;
             }
         }
 
-        console.log(filters);
+       
 
         let arg = {
             query: [
@@ -156,14 +157,15 @@ async function getTodayAbsentEmployee(req, res) {
                     $unwind: '$attendances_details'
                 },
                 {
-                    $addFields: {
-                        absent_date: { $toDate: "$attendances_details.absent_date" },
-                        employee_name: { $concat: ['$first_name', '$last_name'] }
+                    $match: {
+                        "attendances_details": { $ne: [] }, 
+                         "attendances_details.absent_date":req.body.filters.absent_date
                     }
                 },
                 {
-                    $match: {
-                        "attendances_details": { $ne: [] }, ...filters
+                    $addFields: {
+                        absent_date: { $toDate: "$attendances_details.absent_date" },
+                        employee_name: { $concat: ['$first_name', '$last_name'] }
                     }
                 },
                 { $limit: req.body.no_of_record },
