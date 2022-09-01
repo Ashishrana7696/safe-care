@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const salary = mongoose.model("salary_detail", salarySchema);
 
 
-async function getData(id)
+async function getData()
   {
     
            return salary.aggregate([
@@ -43,7 +43,7 @@ async function getData(id)
               },
               
             },
-            { $match : { employee_id:mongoose.Types.ObjectId(id)} }
+            // { $match : { employee_id:mongoose.Types.ObjectId(id)} }
           ]);
   }
     

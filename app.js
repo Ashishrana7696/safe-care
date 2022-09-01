@@ -5,7 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var ResponseMicros = require('./Macros/ResponseMicros');
 const mongoose = require("mongoose");
-
+const schedule=require('node-schedule');
+var fs = require('fs');
+var router = express.Router();
+const employeesDetails = require('./controllers/employeesDetails');
 //for use env varables
 require('dotenv').config();
 const env                     = process.env;
@@ -53,5 +56,11 @@ mongoose.connect(url, {
 app.listen(env.PORT, () => {
   console.log(`Example app listening at http://localhost:${env.PORT}`)
 })
+
+const someDate=new Date('');
+schedule.scheduleJob('01 12 1 * *',()=>{
+ employeesDetails.generatePdf();
+ console.log("done email");
+});
 
 module.exports = app;
