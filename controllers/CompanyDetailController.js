@@ -110,11 +110,11 @@ async function getEmployeeVisitsList(req, res) {
       }
     }
 
-   
+
     let arg = {
       query: [
         {
-          $match: { ...filters}
+          $match: { ...filters }
         },
         {
           $lookup: {
@@ -128,7 +128,7 @@ async function getEmployeeVisitsList(req, res) {
           $unwind: '$employee_visits'
         },
         {
-          $match: { ...filtersForEmpVisits}
+          $match: { ...filtersForEmpVisits }
         },
         {
           $lookup: {
@@ -164,7 +164,7 @@ async function getEmployeeVisitsList(req, res) {
             day: '$employee_visits.day',
           }
         },
-       
+
         { $limit: req.body.no_of_record },
         { $skip: offset },
         {
