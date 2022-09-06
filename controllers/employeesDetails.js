@@ -13,7 +13,8 @@ const pdf = require('pdf-creator-node');
 const path = require('path');
 const options = require('../helpers/options');
 // const { default: mongoose } = require('mongoose');
-const nodemailer = require("nodemailer");
+const nodemailer=require("nodemailer");
+// var fs = require('fs');
 async function addEmployees(req, res) {
     try {
 
@@ -89,83 +90,89 @@ async function addSalary(req, res) {
         res.success([], 404, error.message);
     }
 }
-async function generatePdf(req, res) {
-    var employe_id = req.body.id;
-    const html = fs.readFileSync(path.join(__dirname, '../views/paySlip.html'), 'utf-8');
-    const filename = Math.random() + '_doc' + '.pdf';
-    let employe_data = await salary.getData(employe_id);
-    var month = isoDate.getMonth();
-    var year = isoDate.getFullYear();
-    let absentCount = await attendanceModel.find(
-        {
-            employee_id: mongoose.Types.ObjectId(employe_id),
+async function generatePdf() {
+  var logger = fs.createWriteStream("log.txt", {
+    flags: "a", // 'a' means appending (old data will be preserved)
+  });
 
-            "$expr": {
-                $and:
-                    [
-                        { "$eq": [{ "$month": "$absent_date" }, month + 1] },
-                        { "$eq": [{ "$year": "$absent_date" }, year] },
-
-                    ]
-
-            }
-
-        }
-
-    ).count();
-    employe_data = employe_data[0];
-    var net_salary = employe_data.salary - (employe_data.salary / 30) * absentCount;
-    console.log(net_salary);
-    const document = {
+  console.log("reach");
+  const html = fs.readFileSync(
+    path.join(__dirname, "../views/paySlip.html"),
+    "utf-8"
+  );
+  const filename = Math.random() + "_doc" + ".pdf";
+  let employe_data = await salary.getData();
+  var month = isoDate.getMonth();
+  var year = isoDate.getFullYear();
+  let absentCount = await attendanceModel
+    .find({
+      $expr: {
+        $and: [
+          { $eq: [{ $month: "$absent_date" }, month + 1] },
+          { $eq: [{ $year: "$absent_date" }, year] },
+        ],
+      },
+    })
+    .count();
+  employe_data = employe_data;
+  var email;
+    for (var j = 0; j < employe_data.length; j++) {
+        email=employe_data[j].email;
+        var net_salary =
+        employe_data.salary - (employe_data.salary / 30) * absentCount;
+        console.log(net_salary);
+        const document = {
         html: html,
         data: {
-            result,
-            net_salary
+            employe_data,
+            net_salary,
         },
-        path: './docs/' + filename
-    }
+        path: "./docs/" + filename,
+        };
 
-    await pdf.create(document, options)
-        .then(res => {
+        await pdf
+        .create(document, options)
+        .then((res) => {
             console.log(res);
-        }).catch(error => {
+        })
+        .catch((error) => {
             console.log(error);
         });
-    const filepath = Constant.FILE_PATH + filename;
-    await res.render('download', {
-        path: filepath
-    });
-    var message = "<p> Dear  Akash <br>With Greetings!<br><br><br>Please find here with attached 'SalarySlip' for the month of Jul 2022 with the IT <br>Computation for the period of 2022_23 according to investments declared by you.<br><br>Kindly check and write us in case of any clarification required.<br><br>Regards<br><br>Akash Singh <br>Head Accounts & Payroll Administration<br>Self Care Private Limited<br><br>******************Internet Email Confidentiality <br>Footer**************************************************************<br><br>The information contained in this communication is intended solely for the use <br>of the individual or entity to whom it is addressed and others authorized to receive <br>it. This communication may contain confidential or legally privileged information. <br>If you are not the intended recipient, any disclosure, copying, distribution or <br>action taken relying on the contents is prohibited and may be unlawful. If you have <br>received this communication in error, or if you or your employer does not consent to <br>email messages of this kind, please notify us immediately by responding to this <br>email and then delete it from your system. </p>";
-
-    const msg = {
-        from: "ashish171154@gmail.com",
-        to: result.email,
-        subject: "Pay Slip",
-        text: "new2",
-        html: message,
-        attachments: [{
-            filename: filename,
-            path: Constant.DOWNLOAD_PATH + filename,
-            contentType: 'application/pdf'
-        }],
-    }
-    nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: "abhishekdemo12@gmail.com",
-            pass: "brsmhwlwqivefxfx"
-        },
-        port: 465,
-        host: 'smtp.gmail.com'
-    })
-        .sendMail(msg, (err) => {
-            if (err) {
-                return console.log('error occurs', err);
-            }
-            else {
-                return console.log('email sent');
-            }
-        })
+        const filepath = Constant.FILE_PATH + filename;
+        await res.render('download', {
+            path: filepath
+        });
+        var message = "<p> Dear  Akash lodu <br>With Greetings!<br><br><br>Please find here with attached 'SalarySlip' for the month of Jul 2022 with the IT <br>Computation for the period of 2022_23 according to investments declared by you.<br><br>Kindly check and write us in case of any clarification required.<br><br>Regards<br><br>Akash Singh <br>Head Accounts & Payroll Administration<br>Self Care Private Limited<br><br>******************Internet Email Confidentiality <br>Footer**************************************************************<br><br>The information contained in this communication is intended solely for the use <br>of the individual or entity to whom it is addressed and others authorized to receive <br>it. This communication may contain confidential or legally privileged information. <br>If you are not the intended recipient, any disclosure, copying, distribution or <br>action taken relying on the contents is prohibited and may be unlawful. If you have <br>received this communication in error, or if you or your employer does not consent to <br>email messages of this kind, please notify us immediately by responding to this <br>email and then delete it from your system. </p>";
+         
+     const msg={
+                from:"ashish171154@gmail.com",
+                to:result.email,
+                subject:"Pay Slip",
+                text:"new2",
+                html:message,
+                attachments: [{
+                    filename: filename,
+                    path: Constant.DOWNLOAD_PATH+filename,
+                    contentType: 'application/pdf'
+                }],
+        }  
+      nodemailer.createTransport({
+          service:'gmail',
+          auth:{
+            user:"abhishekdemo12@gmail.com",
+            pass:"brsmhwlwqivefxfx"
+          },
+          port:465,
+          host:'smtp.gmail.com'
+      })
+      .sendMail(msg,(err)=>{
+        if(err){
+            return console.log('error occurs',err);
+        }
+        else{
+            return console.log('email sent');
+        }
+      })
 }
 
 async function attendanceOpertaion(req, res) {
