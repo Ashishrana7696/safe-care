@@ -63,7 +63,7 @@ const main = async () => {
   // PREVENT CORS ERROR /
   // API.use(cors());
   app.use((req, res, next) => {
-    const domain = ["http://localhost:3000/"];
+    const domain = ["https://safe-care-api.herokuapp.com","http://localhost:3000/"];
 
     console.log(req.header('Origin'));
     res.status(200);
