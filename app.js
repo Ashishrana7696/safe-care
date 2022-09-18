@@ -83,7 +83,7 @@ app.use('/users', usersRouter);
 
 };
 
-app.listen(env.PORT, main);
+app.listen(env.PORT || 3000, main);
 // app.listen(env.PORT, () => {
 //   console.log(`Example app listening at http://localhost:${env.PORT}`)
 // })
