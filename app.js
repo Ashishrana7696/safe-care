@@ -28,6 +28,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', (req, res) => {
+  res.send("Hello Safe Care");
+});
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -73,14 +78,6 @@ const main = async () => {
     }
     next();
   });
-
-
-app.get('/', (req, res) => {
-  res.send("Hello Safe Care");
-});
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
 };
 
 app.listen(env.PORT || 3000, main);
