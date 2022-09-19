@@ -31,6 +31,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.send("Hello Safe Care");
 });
+
+app.all('*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -62,22 +70,24 @@ const main = async () => {
  
   // PREVENT CORS ERROR /
   // API.use(cors());
-  app.use((req, res, next) => {
-    const domain = ["http://localhost:3000/","https://safe-care-api.herokuapp.com"];
+  // app.use((req, res, next) => {
+  //   const domain = ["http://localhost:3000/","https://safe-care-api.herokuapp.com"];
 
-    console.log(req.header('Origin'));
-    res.status(200);
-    if (domain.indexOf(req.header('Origin')) !== -1) {
-      res.header("Access-Control-Allow-Origin", req.header('Origin'));
-      res.header("Access-Control-Allow-Headers", "Content-Type");
-      res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT, HEAD");
-    } else {
-      res.header("Access-Control-Allow-Origin", "");
-      res.header("Access-Control-Allow-Headers", "");
-      res.header("Access-Control-Allow-Methods", "");
-    }
-    next();
-  });
+  //   console.log(req.header('Origin'));
+  //   res.status(200);
+  //   if (domain.indexOf(req.header('Origin')) !== -1) {
+  //     res.header("Access-Control-Allow-Origin", req.header('Origin'));
+  //     res.header("Access-Control-Allow-Headers", "Content-Type");
+  //     res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT, HEAD");
+  //   } else {
+  //     res.header("Access-Control-Allow-Origin", "");
+  //     res.header("Access-Control-Allow-Headers", "");
+  //     res.header("Access-Control-Allow-Methods", "");
+  //   }
+  //   next();
+  // });
+
+ 
 };
 
 app.listen(env.PORT || 3000, main);
