@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var ResponseMicros = require('./Macros/ResponseMicros');
 const mongoose = require("mongoose");
+const cors = require('cors')
 const schedule = require('node-schedule');
 var fs = require('fs');
 var router = express.Router();
@@ -17,6 +18,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(cors());
 ResponseMicros.response(app);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
